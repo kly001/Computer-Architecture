@@ -2,6 +2,16 @@
 
 import sys
 
+# PC: Program Counter, address of the currently executing instruction
+# IR: Instruction Register, contains a copy of the currently executing instruction
+# MAR: Memory Address Register, holds the memory address we're reading or writing
+# MDR: Memory Data Register, holds the value to write or the value just read
+# FL: Flags
+
+LDI     =   0b10000010
+PRN     =   0b01000111
+HLT     =   0b00000001
+
 class CPU:
     """Main CPU class."""
 
@@ -9,13 +19,16 @@ class CPU:
         """Construct a new CPU."""
         self.ram = [0] * 256
         self.reg = [0] * 8
-        self.pc = 0
+        self.pc = 0 # program counter
+     
+       
+        
 
-    def ram_read(self, address):
-        return self.ram[address]
+    def ram_read(self, MAR):
+        return self.ram[MAR]
     
-    def ram_write(self, value, address):
-        self.ram[address] = value
+    def ram_write(self, MDR, MAR):
+        self.ram[MAR] = MDR
 
     def load(self):
         """Load a program into memory."""
@@ -70,4 +83,22 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
-        pass
+        running = True
+
+        while running:
+            command = self.ram[self.pc]
+
+            if command == HLT:
+                running = False
+                
+
+            elif command == PRN:
+                print("This is working!")
+                self.pc += 1
+
+        self.pc += 1
+           
+
+
+    print("HERE !") 
+
