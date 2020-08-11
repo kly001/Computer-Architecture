@@ -1,6 +1,6 @@
 import sys
 
-PRINT_BEEJ      = 1
+PRINT_JOAN      = 1
 HALT            = 2
 PRINT_NUM       = 3
 SAVE            = 4 # save a value to a register
@@ -8,7 +8,7 @@ PRINT_REGISTER  = 5 # print a value from a register
 ADD             = 6 # add the value from a second register into the first register(regA += regB)
 
 memory = [
-    PRINT_BEEJ,
+    PRINT_JOAN,
     PRINT_NUM,
     1,
     SAVE,
@@ -33,8 +33,8 @@ running = True
 while running:
     command = memory[pc]
 
-    if command == PRINT_BEEJ:
-        print("Beej !")
+    if command == PRINT_JOAN:
+        print("JOAN !")
         pc += 1
     
     elif command == HALT:

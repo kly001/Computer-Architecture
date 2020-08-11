@@ -8,9 +8,6 @@ import sys
 # MDR: Memory Data Register, holds the value to write or the value just read
 # FL: Flags
 
-LDI     =   0b10000010
-PRN     =   0b01000111
-HLT     =   0b00000001
 
 class CPU:
     """Main CPU class."""
@@ -83,22 +80,50 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
+
+        LDI     =   0b10000010
+        PRN     =   0b01000111
+        HLT     =   0b00000001
+
         running = True
 
         while running:
-            command = self.ram[self.pc]
+            ir = self.ram[self.pc]
 
-            if command == HLT:
+            if ir == HLT:
                 running = False
+                self.pc+=1
                 
 
-            elif command == PRN:
-                print("This is working!")
-                self.pc += 1
+            elif ir == PRN:
+                num = self.reg[self.pc + 1]
+                print(num)
+                self.pc+=2
 
-        self.pc += 1
-           
+            elif ir == LDI:
+                reg_a = self.ram_read(self.pc + 1)
+                reg_b = self.ram_read(self.pc + 2)
+                self.reg[reg_a] += self.reg[reg_b]
+                self.pc+=3
 
+            else:
+                print(f"Unknown instructions {ir}")
+                sys.exit(1)
 
-    print("HERE !") 
+###----------------------------------------------------------------------------
+### Test
+# if __name__ == "__main__":
+#     LS8 = CPU()
+#     LS8.load()
+ 
+#     # for i in range(9):
+#     #     print(LS8.ram_read(i))
 
+#     print(LS8.ram_read(0))      # 130
+#     print(LS8.ram_read(1)) 
+#     print(LS8.ram_read(2))      #  8
+#     print(LS8.ram_read(3))      # 71
+#     print(LS8.ram_read(4))
+#     print(LS8.ram_read(5))      # 1
+#     print(LS8.ram_read(6)) 
+#     print(LS8.ram_read(7))
