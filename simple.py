@@ -4,6 +4,7 @@ PRINT_NUM      =  0b01000011  # command 3
 SAVE           =  0b10000100
 PRINT_REGISTER =  0b01000101
 ADD            =  0b10000110  # command 6
+MULT           =  0b10100010
 
 
 # Rules of our  game

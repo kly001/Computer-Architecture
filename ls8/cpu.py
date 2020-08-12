@@ -49,11 +49,11 @@ class CPU:
             address += 1
 
 
-    def alu(self, op, reg_a, reg_b):
+    def alu(self, op, operand_a, operand_b):
         """ALU operations."""
 
         if op == "ADD":
-            self.reg[reg_a] += self.reg[reg_b]
+            self.reg[operand_a] += self.reg[operand_b]
         #elif op == "SUB": etc
         else:
             raise Exception("Unsupported ALU operation")
@@ -89,29 +89,32 @@ class CPU:
 
         while running:
             ir = self.ram[self.pc]
+            num_operands = ir>>6
 
             if ir == HLT:
                 running = False
-                self.pc+=1
+              
                 
 
             elif ir == PRN:
                 num = self.reg[self.ram_read(self.pc +1)]
                 print(num)
-                self.pc+=2
+               
 
 
             elif ir == LDI:
-                reg_a = self.ram_read(self.pc + 1)
-                # print(reg_a)
-                reg_b = self.ram_read(self.pc + 2)
-                # print(reg_b)
-                self.reg[reg_a] = reg_b
-                self.pc+=3
+                operand_a = self.ram_read(self.pc + 1)
+                # print(operand_a)
+                operand_b = self.ram_read(self.pc + 2)
+                # print(operand_b)
+                self.reg[operand_a] = operand_b
+              
 
             else:
                 print(f"Unknown instructions {ir}")
                 sys.exit(1)
+
+            self.pc += num_operands + 1
 
 ###----------------------------------------------------------------------------
 
