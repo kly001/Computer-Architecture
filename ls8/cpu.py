@@ -96,7 +96,7 @@ class CPU:
                 
 
             elif ir == PRN:
-                num = self.reg[self.pc + 1]
+                num = self.reg[self.ram_read(self.pc +1)]
                 print(num)
                 self.pc+=2
 
@@ -115,19 +115,19 @@ class CPU:
 
 ###----------------------------------------------------------------------------
 
-if __name__ == "__main__":
-    emul = CPU()
-    emul.load()
+# if __name__ == "__main__":
+#     emul = CPU()
+#     emul.load()
  
-    # for i in range(9):
-    #     print(emul.ram_read(i))
+#     # for i in range(9):
+#     #     print(emul.ram_read(i))
 
-    print(emul.ram_read(0))      # 130
-    print(emul.ram_read(1)) 
-    print(emul.ram_read(2))      #  8
-    print(emul.ram_read(3))      # 71
-    print(emul.ram_read(4))
-    print(emul.ram_read(5))      # 1
-    print(emul.ram_read(6)) 
-    print(emul.ram_read(7))
+#     print(emul.ram_read(0))      # 130
+#     print(emul.ram_read(1)) 
+#     print(emul.ram_read(2))      #  8
+#     print(emul.ram_read(3))      # 71
+#     print(emul.ram_read(4))
+#     print(emul.ram_read(5))      # 1
+#     print(emul.ram_read(6)) 
+#     print(emul.ram_read(7))
     
