@@ -14,9 +14,9 @@ class CPU:
 
     def __init__(self):
         """Construct a new CPU."""
-        self.ram = [0] * 256
-        self.reg = [0] * 8
-        self.pc = 0 # program counter
+        self.ram = [0] * 256    # 256 bytes of RAM
+        self.reg = [0] * 8      # 8 registers
+        self.pc = 0             # program counter
      
        
         
@@ -102,7 +102,9 @@ class CPU:
 
             elif ir == LDI:
                 reg_a = self.ram_read(self.pc + 1)
+                # print(reg_a)
                 reg_b = self.ram_read(self.pc + 2)
+                # print(reg_b)
                 self.reg[reg_a] += self.reg[reg_b]
                 self.pc+=3
 
@@ -111,19 +113,19 @@ class CPU:
                 sys.exit(1)
 
 ###----------------------------------------------------------------------------
-### Test
-# if __name__ == "__main__":
-#     LS8 = CPU()
-#     LS8.load()
- 
-#     # for i in range(9):
-#     #     print(LS8.ram_read(i))
 
-#     print(LS8.ram_read(0))      # 130
-#     print(LS8.ram_read(1)) 
-#     print(LS8.ram_read(2))      #  8
-#     print(LS8.ram_read(3))      # 71
-#     print(LS8.ram_read(4))
-#     print(LS8.ram_read(5))      # 1
-#     print(LS8.ram_read(6)) 
-#     print(LS8.ram_read(7))
+if __name__ == "__main__":
+    emul = CPU()
+    emul.load()
+ 
+    for i in range(9):
+        print(emul.ram_read(i))
+
+    # print(emul.ram_read(0))      # 130
+    # print(emul.ram_read(1)) 
+    # print(emul.ram_read(2))      #  8
+    # print(emul.ram_read(3))      # 71
+    # print(emul.ram_read(4))
+    # print(emul.ram_read(5))      # 1
+    # print(emul.ram_read(6)) 
+    # print(emul.ram_read(7))
