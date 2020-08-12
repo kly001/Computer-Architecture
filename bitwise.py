@@ -82,34 +82,45 @@
 # lft5 = 0b10101010<<5
 # print(lft5)
 
----------------------------------------------------------
-# How can we isolate the leftmost bit?
-# Rightshifting
+# ---------------------------------------------------------
+# # How can we isolate the leftmost bit?
+# # Rightshifting
 
-0b10101010 >> 7
+# 0b10101010 >> 7
 
----------------------------------------------------------
-# Bitmasking:
+# ---------------------------------------------------------
+# # Bitmasking:
 
-#  How can we isolate the rightmost bits?
-#  Use AND; put 0's over the bits you don't care about
-#  and 1's over the ones you do.
+# #  How can we isolate the rightmost bits?
+# #  Use AND; put 0's over the bits you don't care about
+# #  and 1's over the ones you do.
 
-          vv
-  0b10101010
-& 0b00000011
-------------
-  0b00000010  # You are left with the original values of the bits you wanted
+#           vv
+#   0b10101010
+# & 0b00000011
+# ------------
+#   0b00000010  # You are left with the original values of the bits you wanted
 
----------------------------------------------------------
+# ---------------------------------------------------------
 
-# How can we isolate two center bits?
-#   1. Rightshift the first nibble (4 bits)
-#   2. Mask out the remaining two bits using AND
+# # How can we isolate two center bits?
+# #   1. Rightshift the first nibble (4 bits)
+# #   2. Mask out the remaining two bits using AND
 
-      vv
-  0b10101010>>4  # ob00001010
-        0b00001010
-    &   0b00000011
-------------------
-        0b00000010
+#       vv
+#   0b10101010>>4  # ob00001010
+#         0b00001010
+#     &   0b00000011
+# ------------------
+#         0b00000010
+
+# ----------------------------------------------------------
+# Apply shifting and masking to extract instruction length (num_operands)
+# Apply shifting and masking to extract whether this is an ALU op
+# ADD = 0b10100000
+# num_operands = ADD>>6
+# is_alu_operational = (ADD>>5) & 0b1
+
+# pc += num_operands + 1
+#   # 0b10100000>>5
+#   # 0b101 & 0b001 ==> 0b1
