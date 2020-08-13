@@ -45,21 +45,43 @@ class CPU:
 
         address = 0
 
-        # For now, we've just hardcoded a program:
+        # # For now, we've just hardcoded a program:
 
-        program = [
-            # From print8.ls8
-            0b10000010, # LDI R0,8
-            0b00000000,
-            0b00001000,
-            0b01000111, # PRN R0
-            0b00000000,
-            0b00000001, # HLT
-        ]
+        # program = [
+        #     # From print8.ls8
+        #     0b10000010, # LDI R0,8
+        #     0b00000000,
+        #     0b00001000,
+        #     0b01000111, # PRN R0
+        #     0b00000000,
+        #     0b00000001, # HLT
+        # ]
 
-        for instruction in program:
-            self.ram[address] = instruction
-            address += 1
+        try:
+            address = 0
+            #open the file
+            with open(sys.argv[1]) as f:
+                #read every line
+                for line in f:
+                    # Use strip to make sure no errors occur in spacing
+                    comment_split = line.strip().split("#")
+                    # Cast number string to int
+                    value = comment_split[0].strip()
+                    # Leave Strings empty
+                    if value == "":
+                        continue
+                    instruction = int(value, 2)
+                    # Populate memory array
+                    self.ram[address] = instruction
+                    address += 1
+
+        except:
+            print("cant find file")
+            sys.exit(2)
+
+        # for instruction in program:
+        #     self.ram[address] = instruction
+        #     address += 1
 
 
     def alu(self, op, operand_a, operand_b):
