@@ -8,23 +8,36 @@ import sys
 # MDR: Memory Data Register, holds the value to write or the value just read
 # FL: Flags
 
+LDI     =   0b10000010
+PRN     =   0b01000111
+HLT     =   0b00000001
+
 
 class CPU:
     """Main CPU class."""
 
     def __init__(self):
         """Construct a new CPU."""
-        self.ram = [0] * 256    # 256 bytes of RAM
-        self.reg = [0] * 8      # 8 registers
+        self.ram = [0] * 256    # 256 bytes of RAM (memory)
+        self.reg = [0] * 8      # 8 registers ==> R0 through R7
         self.pc = 0             # program counter
+        self.running = True
      
        
         
 
     def ram_read(self, MAR):
+        """
+        accepts address to read
+        returns value stored there
+        """
         return self.ram[MAR]
     
     def ram_write(self, MDR, MAR):
+        """
+        acccepts value to write and adress to write it to
+        writes value to memory at that address
+        """
         self.ram[MAR] = MDR
 
     def load(self):
@@ -80,41 +93,39 @@ class CPU:
 
     def run(self):
         """Run the CPU."""
+       
+        while self.running:
 
-        LDI     =   0b10000010
-        PRN     =   0b01000111
-        HLT     =   0b00000001
+         #  get command
+            IR= self.ram[self.pc]   # command; where pc is
+            # we might not use these, depending on the command.  Get them just in case
+            operand_a = self.ram_read(self.pc + 1)
+            # print(operand_a)
+            operand_b = self.ram_read(self.pc + 2)
+            # print(operand_b)
 
-        running = True
+         # update program counter
+         # look at the first two bits of the instruction
+            self.pc += 1 + (IR>>6)
 
-        while running:
-            ir = self.ram[self.pc]
-            num_operands = ir>>6
+            if IR == HLT:
+                self.running = False
+                # could also use sys.exit()
 
-            if ir == HLT:
-                running = False
+            # conditionals for HLT, PRN and LDI:
               
-                
-
-            elif ir == PRN:
-                num = self.reg[self.ram_read(self.pc +1)]
-                print(num)
+            elif IR == PRN:     # takes a register number and prints out it's contents
+                # where to get register number?  ==> operand_a
+                # how to get contents?          ==> inside self.reg
+                print(self.reg[operand_a])
                
-
-
-            elif ir == LDI:
-                operand_a = self.ram_read(self.pc + 1)
-                # print(operand_a)
-                operand_b = self.ram_read(self.pc + 2)
-                # print(operand_b)
+            elif IR == LDI:     # set a register to a value
+                # what is the register number?
+                # what is the value?
+                # how do I set the register?
                 self.reg[operand_a] = operand_b
               
 
-            else:
-                print(f"Unknown instructions {ir}")
-                sys.exit(1)
-
-            self.pc += num_operands + 1
 
 ###----------------------------------------------------------------------------
 

@@ -8,5 +8,6 @@ from cpu import *
 cpu = CPU()
 
 cpu.load()
+# cpu.load('sys.argv', 'r')
 cpu.run()
 print("sys.argv: ",sys.argv)

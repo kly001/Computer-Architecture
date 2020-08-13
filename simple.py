@@ -79,6 +79,7 @@ while running:
         reg_idx = memory[pc + 1]
         print(registers[reg_idx])
 
+
     if command == ADD:
         first_reg_idx = memory[pc + 1]
         second_reg_idx = memory[pc + 2]
