@@ -14,6 +14,9 @@ HLT     =   0b00000001
 MUL     =   0b10100010 
 PUSH    =   0b01000101
 POP     =   0b01000110
+CALL    =   0b01010000
+RET     =   0b00010001
+ADD     =   0b10100000
 
 #  Our dev algotrithm for adding commands
 ##  add code to top
@@ -37,6 +40,8 @@ class CPU:
         self.branchtable[PRN] = self.prn
         self.branchtable[PUSH] = self.push
         self.branchtable[POP] = self.pop
+        self.branchtable[CALL] = self.call
+        self.branchtable[RET] = self.ret
 
 
 
@@ -102,7 +107,7 @@ class CPU:
     def alu(self, op, operand_a, operand_b):
         """ALU operations."""
 
-        if op == "ADD":
+        if op == ADD:
             self.reg[operand_a] += self.reg[operand_b]
         elif op == MUL:
                 self.reg[operand_a] *= self.reg[operand_b]
@@ -145,8 +150,10 @@ class CPU:
 
          # update program counter
          # look at the first two bits of the instruction
-         #  if the command sets the PC directly, then don't do this:
-            self.pc += 1 + (IR>>6)
+
+            sets_pc_directly = IR>>4 & 0b0001
+            if not sets_pc_directly:
+                self.pc += 1 + (IR>>6)
 
         #  if IR is an ALU command, send to ALU
 
@@ -174,7 +181,7 @@ class CPU:
         sp = self.reg[7]
         # first operand is address of register holding value
         value = self.reg[operand_a]
-        # put that value in meory
+        # put that value in memory
         self.ram[sp] = value  
         # shortened version:
         # #  self.ram[sp] = self.reg[operand_a] 
@@ -185,6 +192,27 @@ class CPU:
         value = self.ram[sp]
         # write to reg[operand_a]
         self.reg[operand_a] = value
+        # increment SP
+        self.reg[7] += 1
+    
+    def call(self, operand_a, *_):
+        # decrement the SP
+        self.reg[7] -= 1
+        sp = self.reg[7]
+        # get address for RET
+        return_address = self.pc + 2
+        # put that value in memory
+        self.ram[sp] = return_address 
+
+        destination_address = self.reg[operand_a]
+        self.pc = destination_address
+
+    def ret(self, *_):
+        # pop from stack
+        sp = self.reg[7]
+        value = self.ram[sp]
+        # set PC to value popped from stack
+        self.pc = value
         # increment SP
         self.reg[7] += 1
 
