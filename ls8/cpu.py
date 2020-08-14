@@ -42,9 +42,6 @@ class CPU:
 
     def load(self):
         """Load a program into memory."""
-
-        address = 0
-
         # # For now, we've just hardcoded a program:
 
         # program = [
@@ -57,27 +54,29 @@ class CPU:
         #     0b00000001, # HLT
         # ]
 
+        address = 0
+        # print(address)
         try:
-            address = 0
-            #open the file
-            with open(sys.argv[1]) as f:
-                #read every line
-                for line in f:
-                    # Use strip to make sure no errors occur in spacing
-                    comment_split = line.strip().split("#")
-                    # Cast number string to int
-                    value = comment_split[0].strip()
-                    # Leave Strings empty
-                    if value == "":
-                        continue
-                    instruction = int(value, 2)
-                    # Populate memory array
-                    self.ram[address] = instruction
-                    address += 1
+            with open(sys.argv[1]) as file:
+                for line in file:
+                    # print(line)
+                    comment_split = line.split('#')
+                    possible_num = comment_split[0]
 
-        except:
-            print("cant find file")
-            sys.exit(2)
+                    if possible_num == '':
+                        continue
+
+                    if possible_num[0] == '1' or possible_num[0] == '0':
+                        num = possible_num[:8]
+                        # print(f'{num}: {int(num, 2)}')
+
+                        self.ram[address] = int(num, 2)
+                        address += 1
+
+        except FileNotFoundError:
+            print(f'{sys.argv[0]}:{sys.argv[1]} not found')
+
+ 
 
         # for instruction in program:
         #     self.ram[address] = instruction
