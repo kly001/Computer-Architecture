@@ -11,6 +11,7 @@ import sys
 LDI     =   0b10000010
 PRN     =   0b01000111
 HLT     =   0b00000001
+MUL     =   0b10100010 
 
 
 class CPU:
@@ -23,41 +24,34 @@ class CPU:
         self.pc = 0             # program counter
         self.running = True
      
-       
-        
-
-    def ram_read(self, MAR):
-        """
-        accepts address to read
-        returns value stored there
-        """
-        return self.ram[MAR]
-    
-    def ram_write(self, MDR, MAR):
-        """
-        acccepts value to write and adress to write it to
-        writes value to memory at that address
-        """
-        self.ram[MAR] = MDR
-
-    def load(self):
+    # def load(self):
         """Load a program into memory."""
         # # For now, we've just hardcoded a program:
+        # address = 0
 
         # program = [
         #     # From print8.ls8
-        #     0b10000010, # LDI R0,8
-        #     0b00000000,
-        #     0b00001000,
-        #     0b01000111, # PRN R0
-        #     0b00000000,
-        #     0b00000001, # HLT
+        #     0b10000010,  # LDI R0,8 (load a number into a register)
+        #     0b00000000,  # R0
+        #     0b00001000,  # 8 (value to print)
+        #     0b01000111,  # PRN R0
+        #     0b00000000,  # Register 0
+        #     0b00000001,  # HLT
         # ]
 
+        # for instruction in program:
+        #     self.ram[address] = instruction
+        #     address += 1
+
+#------------------------------------------------------------------------------
+# # Unhardcode the Machine Code
+
+
+    def load(self, filename):
         address = 0
         # print(address)
         try:
-            with open(sys.argv[1]) as file:
+            with open(filename) as file:
                 for line in file:
                     # print(line)
                     comment_split = line.split('#')
@@ -74,20 +68,32 @@ class CPU:
                         address += 1
 
         except FileNotFoundError:
-            print(f'{sys.argv[0]}:{sys.argv[1]} not found')
+            print(f'{sys.argv[0]}:{sys.argv[1]} not found')     
+        
 
- 
+    def ram_read(self, MAR):
+        """
+        accepts address to read
+        returns value stored there
+        """
+        return self.ram[MAR]
+    
+    def ram_write(self, MDR, MAR):
+        """
+        acccepts value to write and adress to write it to
+        writes value to memory at that address
+        """
+        self.ram[MAR] = MDR
 
-        # for instruction in program:
-        #     self.ram[address] = instruction
-        #     address += 1
-
+    
 
     def alu(self, op, operand_a, operand_b):
         """ALU operations."""
 
         if op == "ADD":
             self.reg[operand_a] += self.reg[operand_b]
+        elif op == MUL:
+                self.reg[operand_a] *= self.reg[operand_b]
         #elif op == "SUB": etc
         else:
             raise Exception("Unsupported ALU operation")
@@ -127,9 +133,17 @@ class CPU:
 
          # update program counter
          # look at the first two bits of the instruction
+         #  if the command sets the PC directly, then don't do this:
             self.pc += 1 + (IR>>6)
 
-            if IR == HLT:
+        #  if IR is an ALU command, send to ALU
+
+            is_alu_command = ((IR>>5) & 0b001) == 1
+
+            if is_alu_command:
+                self.alu(IR, operand_a, operand_b)
+
+            elif IR == HLT:
                 self.running = False
                 # could also use sys.exit()
 
@@ -145,6 +159,8 @@ class CPU:
                 # what is the value?
                 # how do I set the register?
                 self.reg[operand_a] = operand_b
+
+         
               
 
 
