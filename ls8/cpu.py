@@ -23,7 +23,10 @@ class CPU:
         self.reg = [0] * 8      # 8 registers ==> R0 through R7
         self.pc = 0             # program counter
         self.running = True
-     
+        self.branchtable = {}
+        self.branchtable[HLT] = self.hlt
+        self.branchtable[LDI] = self.ldi
+        self.branchtable[PRN] = self.prn
     # def load(self):
         """Load a program into memory."""
         # # For now, we've just hardcoded a program:
@@ -45,7 +48,6 @@ class CPU:
 
 #------------------------------------------------------------------------------
 # # Unhardcode the Machine Code
-
 
     def load(self, filename):
         address = 0
@@ -70,7 +72,6 @@ class CPU:
         except FileNotFoundError:
             print(f'{sys.argv[0]}:{sys.argv[1]} not found')     
         
-
     def ram_read(self, MAR):
         """
         accepts address to read
@@ -84,8 +85,6 @@ class CPU:
         writes value to memory at that address
         """
         self.ram[MAR] = MDR
-
-    
 
     def alu(self, op, operand_a, operand_b):
         """ALU operations."""
@@ -138,27 +137,38 @@ class CPU:
 
         #  if IR is an ALU command, send to ALU
 
-            is_alu_command = ((IR>>5) & 0b001) == 1
+            is_alu_command = IR & 0b00100000            #  classmate's way: check the 3rd bit
+            # is_alu_command = ((IR>>5) & 0b001) == 1   #  Tim's way: delete last 5 & check the 3rd bit
 
             if is_alu_command:
                 self.alu(IR, operand_a, operand_b)
+            else:
+                self.branchtable[IR](operand_a, operand_b)
 
-            elif IR == HLT:
-                self.running = False
-                # could also use sys.exit()
+    def hlt(self,_, __):
+        self.running = False
 
-            # conditionals for HLT, PRN and LDI:
+    def ldi(self, operand_a, operand_b):
+        self.reg[operand_a] = operand_b
+
+    def prn(self, operand_a, _):
+        print(self.reg[operand_a])
+            # elif IR == HLT:
+            #     self.running = False
+            #     # could also use sys.exit()
+
+            # # conditionals for HLT, PRN and LDI:
               
-            elif IR == PRN:     # takes a register number and prints out it's contents
-                # where to get register number?  ==> operand_a
-                # how to get contents?          ==> inside self.reg
-                print(self.reg[operand_a])
+            # elif IR == PRN:     # takes a register number and prints out it's contents
+            #     # where to get register number?  ==> operand_a
+            #     # how to get contents?          ==> inside self.reg
+            #     print(self.reg[operand_a])
                
-            elif IR == LDI:     # set a register to a value
-                # what is the register number?
-                # what is the value?
-                # how do I set the register?
-                self.reg[operand_a] = operand_b
+            # elif IR == LDI:     # set a register to a value
+            #     # what is the register number?
+            #     # what is the value?
+            #     # how do I set the register?
+            #     self.reg[operand_a] = operand_b
 
          
               
