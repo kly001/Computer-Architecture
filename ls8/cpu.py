@@ -12,7 +12,13 @@ LDI     =   0b10000010
 PRN     =   0b01000111
 HLT     =   0b00000001
 MUL     =   0b10100010 
+PUSH    =   0b01000101
+POP     =   0b01000110
 
+#  Our dev algotrithm for adding commands
+##  add code to top
+##  add code and function to branchtable
+##  add function
 
 class CPU:
     """Main CPU class."""
@@ -22,11 +28,18 @@ class CPU:
         self.ram = [0] * 256    # 256 bytes of RAM (memory)
         self.reg = [0] * 8      # 8 registers ==> R0 through R7
         self.pc = 0             # program counter
+        self.reg[7] = 0xF4      # stack pointer for push & pop operations
         self.running = True
+
         self.branchtable = {}
         self.branchtable[HLT] = self.hlt
         self.branchtable[LDI] = self.ldi
         self.branchtable[PRN] = self.prn
+        self.branchtable[PUSH] = self.push
+        self.branchtable[POP] = self.pop
+
+
+
     # def load(self):
         """Load a program into memory."""
         # # For now, we've just hardcoded a program:
@@ -145,25 +158,53 @@ class CPU:
             else:
                 self.branchtable[IR](operand_a, operand_b)
 
-    def hlt(self,_, __):
+    def hlt(self,*_):       #  ==>  " *_ " represents all the unused arguments
         self.running = False
 
     def ldi(self, operand_a, operand_b):
         self.reg[operand_a] = operand_b
 
-    def prn(self, operand_a, _):
+    def prn(self, operand_a, *_):
         print(self.reg[operand_a])
+    
+    def push(self, operand_a, *_):
+        #  decrement SP in R7
+        self.reg[7] -= 1
+        #  Assign variable 
+        sp = self.reg[7]
+        # first operand is address of register holding value
+        value = self.reg[operand_a]
+        # put that value in meory
+        self.ram[sp] = value  
+        # shortened version:
+        # #  self.ram[sp] = self.reg[operand_a] 
+
+    def pop (self, operand_a, *_):
+        # get value of ram[SP]
+        sp = self.reg[7]
+        value = self.ram[sp]
+        # write to reg[operand_a]
+        self.reg[operand_a] = value
+        # increment SP
+        self.reg[7] += 1
+
+
+
+
+#-----------------------------------------------------------------------
+
+## Old code :
             # elif IR == HLT:
             #     self.running = False
             #     # could also use sys.exit()
 
             # # conditionals for HLT, PRN and LDI:
-              
+                
             # elif IR == PRN:     # takes a register number and prints out it's contents
             #     # where to get register number?  ==> operand_a
             #     # how to get contents?          ==> inside self.reg
             #     print(self.reg[operand_a])
-               
+                
             # elif IR == LDI:     # set a register to a value
             #     # what is the register number?
             #     # what is the value?
