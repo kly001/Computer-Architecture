@@ -1,0 +1,18 @@
+00000001          # PRINT_TIM,  
+00000001          # PRINT_TIM,
+00000001          # PRINT_TIM,
+01000011          # PRINT_NUM, 
+01100011             # bin(99),
+10000100          # SAVE,        # <--- PC
+00101010            # bin(42),    number to save
+00000010            # bin(2,)     register to save into
+10000100          # SAVE,
+00101010            #bin(42),     number to save
+00101011            # bin(3),                  # into R3
+10000110          # ADD, # registers[2] = registers[2] + registers[3]
+00000010            # bin(2),                  # Register index
+00000011            # bin(3),                  # also index
+01000101          # PRINT_REGISTER,  # should print 84
+00000010            # bin(2),
+00000010          # HALT, 
+        
